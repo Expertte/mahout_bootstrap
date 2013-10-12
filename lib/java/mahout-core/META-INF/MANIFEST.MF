@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Implementation-Vendor: The Apache Software Foundation
+Implementation-Title: Mahout Core
+Implementation-Version: 0.9-SNAPSHOT
+Implementation-Vendor-Id: org.apache.mahout
+Built-By: jenkins
+Build-Jdk: 1.6.0_45
+Specification-Vendor: The Apache Software Foundation
+Specification-Title: Mahout Core
+Created-By: Apache Maven 3.0.4
+Specification-Version: 0.9-SNAPSHOT
+Archiver-Version: Plexus Archiver
+
