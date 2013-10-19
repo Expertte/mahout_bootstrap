@@ -78,20 +78,24 @@ module Kolplex
     DataModel::GenericDataModel.new(preferences_id_map)
   end
 
-  def self.recommend(user_id, num_of_recommendations)
+  def self.recommend(user_id, num_of_recommendations, tracker_data)
     # model = DataModel::FileDataModel.new(java.io.File.new("data.csv"))
-    puts InterestScoreBuilder.data_model
-    # model = build_generic_data_model(InterestScoreBuilder.data_model)
-    # pearson_similarity = Similarity::PearsonCorrelationSimilarity.new(model)
-    # pearson_similarity.setPreferenceInferrer(Similarity::AveragingPreferenceInferrer.new(model))
-    # neighborhood = Neighborhood::NearestNUserNeighborhood.new(3, pearson_similarity, model)
-    # recommender = Recommender::GenericUserBasedRecommender.new(model, neighborhood, pearson_similarity)
-    # caching_recommender = Recommender::CachingRecommender.new(recommender)
-    # recommended_items = caching_recommender.recommend(user_id.to_i, num_of_recommendations.to_i)
-    # items = recommended_items.map do |item|
-    #   [item.getItemID, item.getValue]
-    # end
-    # items
+    builder = InterestScoreBuilder.new(tracker_data)
+
+
+    model = build_generic_data_model(builder.data_model)
+    pearson_similarity = Similarity::PearsonCorrelationSimilarity.new(model)
+    pearson_similarity.setPreferenceInferrer(Similarity::AveragingPreferenceInferrer.new(model))
+    neighborhood = Neighborhood::NearestNUserNeighborhood.new(3, pearson_similarity, model)
+    recommender = Recommender::GenericUserBasedRecommender.new(model, neighborhood, pearson_similarity)
+    caching_recommender = Recommender::CachingRecommender.new(recommender)
+    recommended_items = caching_recommender.recommend(user_id.to_i, num_of_recommendations.to_i)
+    items = recommended_items.map do |item|
+      [
+        builder.item_ids_map[item.getItemID], builder.item_ids_map[item.getValue]
+      ]
+    end
+    items
   end
 
 end
