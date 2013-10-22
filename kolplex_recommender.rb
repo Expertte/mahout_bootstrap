@@ -62,8 +62,8 @@ module Kolplex
     end
   end
 
-  def self.build_generic_data_model(data_hash)
-    users_preferences = data_hash.each_with_object([]) do |(user_id, item_preferences), result|
+  def self.build_generic_data_model(data)
+    users_preferences = data.each_with_object([]) do |(user_id, item_preferences), result|
       user_preference = DataModel::GenericUserPreferenceArray.new(item_preferences.size)
       item_preferences.each_with_index do |item_preference, index|
         user_preference.setUserID(index, user_id)
@@ -89,11 +89,12 @@ module Kolplex
     neighborhood = Neighborhood::NearestNUserNeighborhood.new(3, pearson_similarity, model)
     recommender = Recommender::GenericUserBasedRecommender.new(model, neighborhood, pearson_similarity)
     caching_recommender = Recommender::CachingRecommender.new(recommender)
-    recommended_items = caching_recommender.recommend(user_id.to_i, num_of_recommendations.to_i)
+
+    mapped_user_id = builder.get_user_mapped_id(user_id)
+
+    recommended_items = caching_recommender.recommend(mapped_user_id, num_of_recommendations.to_i)
     items = recommended_items.map do |item|
-      [
-        builder.item_ids_map[item.getItemID], builder.item_ids_map[item.getValue]
-      ]
+      [ builder.get_item_real_id(item.getItemID), item.getValue ]
     end
     items
   end

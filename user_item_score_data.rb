@@ -32,7 +32,7 @@ class UserItemScoreData
 
   # Returns a hash with the features based on the resources events
   # all values take a binary value multiplied by the given weight
-  # For now only click events and the active time on page are considered
+  # For now only click events and the active time on page are being considered
   # E.g.: { 'social' => 2, 'buy_buttom' => 1, 'contact_seller' => 3 }
 
   def features
@@ -43,6 +43,7 @@ class UserItemScoreData
       if events.include?("click")
         result[type] = (events["click"].last >= 1 ? feature_weights.fetch(type, 0) : 0)
       elsif events.include?("active_time_on_page")
+        # TO DO: Experiment with a sigmoid function here
         result[type] = (events["active_time_on_page"].last >= 5000 ? feature_weights.fetch(type, 0) : 0)
       end
 
@@ -53,4 +54,11 @@ class UserItemScoreData
   def interest_score
     features.values.inject(&:+).to_i
   end
+
+  private
+
+  # def sigmoid(val)
+  #     return 1.0/(1.0 + Math.exp(-val))
+  # end
+
 end
